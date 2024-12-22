@@ -13,7 +13,7 @@
                         FORM INPUT JURUSAN
                     </div>
                     <div>
-                        <form class="max-w-sm mx-auto" method="POST" action="{{ route('majors.store') }}">
+                        <form class="max-w-sm mx-auto" id="majorsFormAdd" method="POST">
                             @csrf
                             <div class="mb-5">
                                 <label for="major_code"
@@ -97,7 +97,9 @@
                                                 <button type="button"
                                                     class="bg-amber-400 p-3 w-10 h-10 rounded-xl text-white hover:bg-amber-500"
                                                     onclick="editSourceModal(this)" data-modal-target="sourceModal"
-                                                    data-id="{{ $f->id }}" data-faculty_code="{{ $f->faculty_code }}" data-major="{{ $f->major }}">
+                                                    data-id="{{ $f->id }}"
+                                                    data-faculty_code="{{ $f->faculty_code }}"
+                                                    data-major="{{ $f->major }}">
                                                     <i class="fi fi-sr-file-edit"></i>
                                                 </button>
                                                 <button
@@ -167,41 +169,27 @@
         </div>
 
     </div>
+    @if (session('message_add'))
+        <script>
+            Swal.fire({
+                title: 'Success!',
+                text: '{{ session('message_add') }}',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    @endif
+    @if (session('message_update'))
+        <script>
+            Swal.fire({
+                title: 'Updated!',
+                text: '{{ session('message_update') }}',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    @endif
     <script>
-        const editSourceModal = (button) => {
-            const formModal = document.getElementById('formSourceModal');
-            const modalTarget = button.dataset.modalTarget;
-            const id = button.dataset.id;
-            const major = button.dataset.major;
-            const faculty_code = button.dataset.faculty_code;
-
-            let url = "{{ route('majors.update', ':id') }}".replace(':id', id);
-            console.log(url);
-
-            let status = document.getElementById(modalTarget);
-            document.getElementById('title_source').innerText = `Update Fakultas ${major}`;
-            document.getElementById('major').value = major;
-
-            document.getElementById('faculty_code').value = faculty_code;
-            let event = new Event('change');
-            document.getElementById('faculty_code').dispatchEvent(event);
-
-            document.getElementById('formSourceButton').innerText = 'Simpan';
-            document.getElementById('formSourceModal').setAttribute('action', url);
-            let csrfToken = document.createElement('input');
-            csrfToken.setAttribute('type', 'hidden');
-            csrfToken.setAttribute('value', '{{ csrf_token() }}');
-            formModal.appendChild(csrfToken);
-
-            let methodInput = document.createElement('input');
-            methodInput.setAttribute('type', 'hidden');
-            methodInput.setAttribute('name', '_method');
-            methodInput.setAttribute('value', 'PATCH');
-            formModal.appendChild(methodInput);
-
-            status.classList.toggle('hidden');
-        }
-
         const dataDelete = async (id, major) => {
             let tanya = confirm(`Apakah anda yakin untuk menghapus fakultas ${major} ?`);
             if (tanya) {
@@ -228,31 +216,72 @@
             }
         }
 
+        const editSourceModal = (button) => {
+            const formModal = document.getElementById('formSourceModal');
+            const modalTarget = button.dataset.modalTarget;
+            const id = button.dataset.id;
+            const major = button.dataset.major;
+            const faculty_code = button.dataset.faculty_code;
+
+            let url = `/api/majorsUpdate/${id}`;
+            console.log(url);
+
+            let status = document.getElementById(modalTarget);
+            document.getElementById('title_source').innerText = `Update Fakultas ${major}`;
+            document.getElementById('major').value = major;
+
+            document.getElementById('faculty_code').value = faculty_code;
+            let event = new Event('change');
+            document.getElementById('faculty_code').dispatchEvent(event);
+
+            document.getElementById('formSourceButton').innerText = 'Simpan';
+            document.getElementById('formSourceModal').setAttribute('action', url);
+            let csrfToken = document.createElement('input');
+            csrfToken.setAttribute('type', 'hidden');
+            csrfToken.setAttribute('value', '{{ csrf_token() }}');
+            formModal.appendChild(csrfToken);
+
+            let methodInput = document.createElement('input');
+            methodInput.setAttribute('type', 'hidden');
+            methodInput.setAttribute('name', '_method');
+            methodInput.setAttribute('value', 'PATCH');
+            formModal.appendChild(methodInput);
+
+            status.classList.toggle('hidden');
+        }
+
         const sourceModalClose = (button) => {
             const modalTarget = button.dataset.modalTarget;
             let status = document.getElementById(modalTarget);
             status.classList.toggle('hidden');
         }
+
+        document.getElementById('submitButton').addEventListener('click', async function() {
+            const form = document.getElementById('majorsForm');
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/api/majorsAdd', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(Object.fromEntries(formData)),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert('Major added successfully!');
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.message || 'Failed to add major'}`);
+                }
+            } catch (err) {
+                alert('An error occurred: ' + err.message);
+            }
+        });
     </script>
-    @if (session('message_add'))
-        <script>
-            Swal.fire({
-                title: 'Success!',
-                text: '{{ session('message_add') }}',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
-        </script>
-    @endif
-    @if (session('message_update'))
-        <script>
-            Swal.fire({
-                title: 'Updated!',
-                text: '{{ session('message_update') }}',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
-        </script>
-    @endif
+
 
 </x-app-layout>

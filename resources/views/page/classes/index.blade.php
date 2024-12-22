@@ -88,7 +88,7 @@
                                                 {{ $f->class_code }}
                                             </td>
                                             <td class="px-6 py-4">
-                                                {{ $f->jurusan->major }}
+                                                {{ $f->major->major }}
                                             </td>
                                             <td class="px-6 py-4 bg-gray-100">
                                                 {{ $f->classes }}

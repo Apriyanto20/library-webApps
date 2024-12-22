@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClassesController;
+use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\LoanPackageController;
@@ -28,5 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('sources', SourcesController::class);
     Route::resource('loanPackages', LoanPackageController::class);
 });
+
+Route::resource('error', ErrorController::class);
 
 require __DIR__.'/auth.php';
