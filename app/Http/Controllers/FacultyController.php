@@ -12,11 +12,15 @@ class FacultyController extends Controller
      */
     public function index()
     {
-        $data = Faculty::paginate(5);
-        $facultyCode = Faculty::createCode();
-        return view('page.faculty.index', compact('facultyCode'))->with([
-            'data' => $data,
+        try {
+            $data = Faculty::paginate(5);
+            $facultyCode = Faculty::createCode();
+            return view('page.faculty.index', compact('facultyCode'))->with([
+                'data' => $data,
         ]);
+        }  catch (\Exception $e) {
+            return redirect()->route('error.index');
+        }
     }
 
     /**
@@ -32,16 +36,20 @@ class FacultyController extends Controller
      */
     public function store(Request $request)
     {
-        $data = [
-            'faculty_code' => $request->input('faculty_code'),
-            'faculty' => $request->input('faculty')
-        ];
+        try {
+            $data = [
+                'faculty_code' => $request->input('faculty_code'),
+                'faculty' => $request->input('faculty')
+            ];
 
-        Faculty::create($data);
+            Faculty::create($data);
 
-        return redirect()
-            ->route('faculty.index')
-            ->with('message_add', 'Data Sudah ditambahkan');
+            return redirect()
+                ->route('faculty.index')
+                ->with('message_add', 'Data Sudah ditambahkan');
+        } catch (\Exception $e) {
+            return redirect()->route('error.index');
+        }
     }
 
     /**
@@ -65,15 +73,19 @@ class FacultyController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $data = [
-            'faculty' => $request->input('faculty')
-        ];
+        try {
+            $data = [
+                'faculty' => $request->input('faculty')
+            ];
 
-        $datas = Faculty::findOrFail($id);
-        $datas->update($data);
-        return redirect()
-            ->route('faculty.index')
-            ->with('message_update', 'Data Sudah diupdate');
+            $datas = Faculty::findOrFail($id);
+            $datas->update($data);
+            return redirect()
+                ->route('faculty.index')
+                ->with('message_update', 'Data Sudah diupdate');
+        } catch (\Exception $e) {
+            return redirect()->route('error.index');
+        }
     }
 
     /**
@@ -81,8 +93,12 @@ class FacultyController extends Controller
      */
     public function destroy(string $id)
     {
-        $data = Faculty::findOrFail($id);
-        $data->delete();
+        try {
+            $data = Faculty::findOrFail($id);
+            $data->delete();
         return back()->with('message_delete','Data Sudah dihapus');
+        } catch (\Exception $e) {
+            return redirect()->route('error.index');
+        }
     }
 }

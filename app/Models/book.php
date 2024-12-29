@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class book extends Model
 {
-    protected $table = 'book';
+    protected $table = 'books';
     protected $fillable = [
         'book_code',
         'tittle',
@@ -40,5 +40,14 @@ class book extends Model
     public function sources()
     {
         return $this->belongsTo(sources::class, 'source_code', 'source_code');
+    }
+
+    public static function createCode()
+    {
+        $latestCode = self::orderBy('book_code', 'desc')->value('book_code');
+        $latestCodeNumber = intval(substr($latestCode, 2));
+        $nextCodeNumber = $latestCodeNumber ? $latestCodeNumber + 1 : 1;
+        $formattedCodeNumber = sprintf("%05d", $nextCodeNumber);
+        return 'B' . $formattedCodeNumber;
     }
 }

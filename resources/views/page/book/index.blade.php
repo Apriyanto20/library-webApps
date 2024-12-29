@@ -1,44 +1,21 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Fakultas') }}
+            {{ __('JURUSAN') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="gap-5 items-start flex">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg w-1/2 p-4">
-                    <div class="p-4 bg-gray-100 mb-2 rounded-xl font-bold">
-                        FORM INPUT FAKULTAS
-                    </div>
-                    <div>
-                        <form class="max-w-sm mx-auto" method="POST" action="{{ route('faculty.store') }}">
-                            @csrf
-                            <div class="mb-5">
-                                <label for="faculty_code"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode
-                                    Fakultas</label>
-                                <input type="text" name="faculty_code"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required placeholder="Konsumen" value="{{ $facultyCode }}" readonly />
-                            </div>
-                            <div class="mb-5">
-                                <label for="faculty"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fakultas</label>
-                                <input type="text" name="faculty"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required placeholder="Fakultas" />
-                            </div>
-                            <button type="submit"
-                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
-                        </form>
-                    </div>
-                </div>
-
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg w-full p-4">
-                    <div class="p-4 bg-gray-100 mb-2 rounded-xl font-bold">
-                        FACULTY
+                    <div class="flex justify-between gap-5">
+                        <div class="p-4 bg-gray-100 mb-2 rounded-xl font-bold w-full">
+                            MAJOR
+                        </div>
+                        <div class="p-4 bg-gray-100 mb-2 rounded-xl font-bold">
+                            <a href="{{ route('book.create') }}">Add</a>
+                        </div>
                     </div>
                     <div>
                         <div class="relative overflow-x-auto">
@@ -50,10 +27,13 @@
                                             NO
                                         </th>
                                         <th scope="col" class="px-6 py-3">
-                                            KODE FAKULTAS
+                                            KODE JURUSAN
                                         </th>
                                         <th scope="col" class="px-6 py-3">
                                             FAKULTAS
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            JURUSAN
                                         </th>
                                         <th scope="col" class="px-6 py-3">
                                             ACTION
@@ -65,31 +45,36 @@
                                         $no = 1;
                                     @endphp
                                     @foreach ($data as $f)
-                                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                        {{-- <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                             <th scope="row"
                                                 class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white bg-gray-100">
                                                 {{ $no++ }}
                                             </th>
                                             <td class="px-6 py-4">
-                                                {{ $f->faculty_code }}
+                                                {{ $f->major_code }}
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                {{ $f->fakultas->faculty }}
                                             </td>
                                             <td class="px-6 py-4 bg-gray-100">
-                                                {{ $f->faculty }}
+                                                {{ $f->major }}
                                             </td>
                                             <td class="px-6 py-4">
                                                 <button type="button"
                                                     class="bg-amber-400 p-3 w-10 h-10 rounded-xl text-white hover:bg-amber-500"
                                                     onclick="editSourceModal(this)" data-modal-target="sourceModal"
-                                                    data-id="{{ $f->id }}" data-faculty="{{ $f->faculty }}">
+                                                    data-id="{{ $f->id }}"
+                                                    data-faculty_code="{{ $f->faculty_code }}"
+                                                    data-major="{{ $f->major }}">
                                                     <i class="fi fi-sr-file-edit"></i>
                                                 </button>
                                                 <button
                                                     class="bg-red-400 p-3 w-10 h-10 rounded-xl text-white hover:bg-red-500"
-                                                    onclick="return dataDelete('{{ $f->id }}','{{ $f->faculty }}')">
+                                                    onclick="return dataDelete('{{ $f->id }}','{{ $f->major }}')">
                                                     <i class="fi fi-sr-delete-document"></i>
                                                 </button>
                                             </td>
-                                        </tr>
+                                        </tr> --}}
                                     @endforeach
                                 </tbody>
                             </table>
@@ -120,13 +105,24 @@
                 <form method="POST" id="formSourceModal">
                     @csrf
                     <div class="flex flex-col  p-4 space-y-6">
-                        <div class="">
-                            <label for="faculty"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fakultas</label>
-                            <input type="text" name="faculty" id="faculty"
+                        <div class="mb-5">
+                            <label for="major"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jurusan</label>
+                            <input type="text" name="major" id="major"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required placeholder="Fakultas" />
                         </div>
+                        {{-- <div class="mb-5">
+                            <label for="faculty_code"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fakultas</label>
+                            <select class="js-example-placeholder-single js-states form-control w-full m-6"
+                                name="faculty_code" id="faculty_code" data-placeholder="Pilih Fakultas">
+                                <option value="">Pilih...</option>
+                                @foreach ($faculty as $f)
+                                    <option value="{{ $f->faculty_code }}">{{ $f->faculty }}</option>
+                                @endforeach
+                            </select>
+                        </div> --}}
                     </div>
                     <div class="flex items-center p-4 space-x-2 border-t border-gray-200 rounded-b">
                         <button type="submit" id="formSourceButton"
@@ -139,40 +135,31 @@
         </div>
 
     </div>
+    @if (session('message_add'))
+        <script>
+            Swal.fire({
+                title: 'Success!',
+                text: '{{ session('message_add') }}',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    @endif
+    @if (session('message_update'))
+        <script>
+            Swal.fire({
+                title: 'Updated!',
+                text: '{{ session('message_update') }}',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    @endif
     <script>
-        const editSourceModal = (button) => {
-            const formModal = document.getElementById('formSourceModal');
-            const modalTarget = button.dataset.modalTarget;
-            const id = button.dataset.id;
-            const faculty = button.dataset.faculty;
-
-            let url = `/api/facultyUpdate/${id}`;
-            console.log(url);
-
-            let status = document.getElementById(modalTarget);
-            document.getElementById('title_source').innerText = `Update Fakultas ${faculty}`;
-            document.getElementById('faculty').value = faculty;
-
-            document.getElementById('formSourceButton').innerText = 'Simpan';
-            document.getElementById('formSourceModal').setAttribute('action', url);
-            let csrfToken = document.createElement('input');
-            csrfToken.setAttribute('type', 'hidden');
-            csrfToken.setAttribute('value', '{{ csrf_token() }}');
-            formModal.appendChild(csrfToken);
-
-            let methodInput = document.createElement('input');
-            methodInput.setAttribute('type', 'hidden');
-            methodInput.setAttribute('name', '_method');
-            methodInput.setAttribute('value', 'PATCH');
-            formModal.appendChild(methodInput);
-
-            status.classList.toggle('hidden');
-        }
-
-        const dataDelete = async (id, faculty) => {
-            let tanya = confirm(`Apakah anda yakin untuk menghapus fakultas ${faculty} ?`);
+        const dataDelete = async (id, major) => {
+            let tanya = confirm(`Apakah anda yakin untuk menghapus jurusan ${major} ?`);
             if (tanya) {
-                await axios.post(`/api/facultyDelete/${id}`, {
+                await axios.post(`/api/majorsDelete/${id}`, {
                         '_method': 'DELETE',
                         '_token': $('meta[name="csrf-token"]').attr('content')
                     })
@@ -195,31 +182,72 @@
             }
         }
 
+        const editSourceModal = (button) => {
+            const formModal = document.getElementById('formSourceModal');
+            const modalTarget = button.dataset.modalTarget;
+            const id = button.dataset.id;
+            const major = button.dataset.major;
+            const faculty_code = button.dataset.faculty_code;
+
+            let url = `/api/majorsUpdate/${id}`;
+            console.log(url);
+
+            let status = document.getElementById(modalTarget);
+            document.getElementById('title_source').innerText = `Update Fakultas ${major}`;
+            document.getElementById('major').value = major;
+
+            document.getElementById('faculty_code').value = faculty_code;
+            let event = new Event('change');
+            document.getElementById('faculty_code').dispatchEvent(event);
+
+            document.getElementById('formSourceButton').innerText = 'Simpan';
+            document.getElementById('formSourceModal').setAttribute('action', url);
+            let csrfToken = document.createElement('input');
+            csrfToken.setAttribute('type', 'hidden');
+            csrfToken.setAttribute('value', '{{ csrf_token() }}');
+            formModal.appendChild(csrfToken);
+
+            let methodInput = document.createElement('input');
+            methodInput.setAttribute('type', 'hidden');
+            methodInput.setAttribute('name', '_method');
+            methodInput.setAttribute('value', 'PATCH');
+            formModal.appendChild(methodInput);
+
+            status.classList.toggle('hidden');
+        }
+
         const sourceModalClose = (button) => {
             const modalTarget = button.dataset.modalTarget;
             let status = document.getElementById(modalTarget);
             status.classList.toggle('hidden');
         }
+
+        document.getElementById('submitButton').addEventListener('click', async function() {
+            const form = document.getElementById('majorsForm');
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/api/majorsAdd', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(Object.fromEntries(formData)),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert('Major added successfully!');
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.message || 'Failed to add major'}`);
+                }
+            } catch (err) {
+                alert('An error occurred: ' + err.message);
+            }
+        });
     </script>
-    @if (session('message_add'))
-        <script>
-            Swal.fire({
-                title: 'Success!',
-                text: '{{ session('message_add') }}',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
-        </script>
-    @endif
-    @if (session('message_update'))
-        <script>
-            Swal.fire({
-                title: 'Updated!',
-                text: '{{ session('message_update') }}',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
-        </script>
-    @endif
+
 
 </x-app-layout>

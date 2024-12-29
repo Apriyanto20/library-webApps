@@ -191,9 +191,9 @@
     @endif
     <script>
         const dataDelete = async (id, major) => {
-            let tanya = confirm(`Apakah anda yakin untuk menghapus fakultas ${major} ?`);
+            let tanya = confirm(`Apakah anda yakin untuk menghapus jurusan ${major} ?`);
             if (tanya) {
-                await axios.post(`/majors/${id}`, {
+                await axios.post(`/api/majorsDelete/${id}`, {
                         '_method': 'DELETE',
                         '_token': $('meta[name="csrf-token"]').attr('content')
                     })

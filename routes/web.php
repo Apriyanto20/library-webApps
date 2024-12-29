@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookController;
 use App\Http\Controllers\ClassesController;
 use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\FacultyController;
@@ -28,6 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('genre', GenreController::class);
     Route::resource('sources', SourcesController::class);
     Route::resource('loanPackages', LoanPackageController::class);
+    Route::resource('book', BookController::class);
 });
 
 Route::resource('error', ErrorController::class);
